@@ -71,7 +71,7 @@ mod webrtc {
     fn copy_source_to_out_dir() -> Result<PathBuf, Error> {
         use fs_extra::dir::CopyOptions;
 
-        if Path::new(BUNDLED_SOURCE_PATH).read_dir()?.next().is_none() {
+        if Path::new(BUNDLED_SOURCE_PATH).read_dir().expect("failed to read_dir").next().is_none() {
             eprintln!("The webrtc-audio-processing source directory is empty.");
             eprintln!("See the crate README for installation instructions.");
             eprintln!("Remember to clone the repo recursively if building from source.");
@@ -82,23 +82,24 @@ mod webrtc {
         let mut options = CopyOptions::new();
         options.overwrite = true;
 
-        fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options)?;
+        fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
 
         Ok(out_dir.join(BUNDLED_SOURCE_PATH))
     }
 
     pub(super) fn build_if_necessary() -> Result<(), Error> {
-        let build_dir = copy_source_to_out_dir()?;
+        let build_dir = copy_source_to_out_dir().expect("failed copy_source_to_out_dir");
 
         if cfg!(target_os = "macos") {
-            run_command(&build_dir, "glibtoolize", None)?;
+            run_command(&build_dir, "glibtoolize", None).expect("failed glibtoolize");
         } else {
-            run_command(&build_dir, "libtoolize", None)?;
+            run_command(&build_dir, "libtoolize", None).expect("failed libtoolize");
         }
 
-        run_command(&build_dir, "aclocal", None)?;
-        run_command(&build_dir, "automake", Some(&["--add-missing", "--copy"]))?;
-        run_command(&build_dir, "autoconf", None)?;
+        run_command(&build_dir, "aclocal", None).expect("failed aclocal");
+        run_command(&build_dir, "automake", Some(&["--add-missing", "--copy"]))
+            .expect("failed automake");
+        run_command(&build_dir, "autoconf", None).expect("failed autoconf");
 
         autotools::Config::new(build_dir)
             .cflag("-fPIC")
