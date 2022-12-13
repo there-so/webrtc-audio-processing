@@ -155,8 +155,17 @@ fn derive_serde(binding_file: &Path) -> Result<(), Error> {
 }
 
 fn main() -> Result<(), Error> {
-    webrtc::build_if_necessary()?;
-    let (webrtc_include, webrtc_lib) = webrtc::get_build_paths()?;
+    // Ref: https://github.com/rust-lang/git2-rs/blob/master/libgit2-sys/build.rs#L27
+    if !Path::new("webrtc-audio-processing/src").exists() {
+        println!("Installing from git...");
+        let _ = std::process::Command::new("git")
+            .args(&["submodule", "update", "--init", "webrtc-audio-processing"])
+            .status();
+    }
+
+    webrtc::build_if_necessary().expect("failed to build if necessary");
+    let (webrtc_include, webrtc_lib) =
+        webrtc::get_build_paths().expect("failed to get build paths");
 
     let mut cc_build = cc::Build::new();
 
@@ -225,5 +234,18 @@ fn main() -> Result<(), Error> {
         derive_serde(&binding_file).expect("Failed to modify derive macros");
     }
 
+    rerun_if(Path::new("webrtc-audio-processing/webrtc"));
+    rerun_if(Path::new("webrtc-audio-processing/configure.ac"));
+
     Ok(())
+}
+
+fn rerun_if(path: &Path) {
+    if path.is_dir() {
+        for entry in std::fs::read_dir(path).expect("read_dir") {
+            rerun_if(&entry.expect("entry").path());
+        }
+    } else {
+        println!("cargo:rerun-if-changed={}", path.display());
+    }
 }
