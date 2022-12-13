@@ -60,7 +60,7 @@ mod webrtc {
     use super::*;
     use failure::bail;
 
-    const BUNDLED_SOURCE_PATH: &str = "./webrtc-audio-processing";
+    const BUNDLED_SOURCE_PATH: &str = "webrtc-audio-processing";
 
     pub(super) fn get_build_paths() -> Result<(PathBuf, PathBuf), Error> {
         let include_path = out_dir().join(BUNDLED_SOURCE_PATH);
@@ -79,10 +79,11 @@ mod webrtc {
         }
 
         let out_dir = out_dir();
-        let mut options = CopyOptions::new();
-        options.overwrite = true;
+        // let mut options = CopyOptions::new();
+        // options.overwrite = true;
 
-        fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
+        // fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
+        cp_r(BUNDLED_SOURCE_PATH, &out_dir).expect("cp_r");
 
         Ok(out_dir.join(BUNDLED_SOURCE_PATH))
     }
@@ -249,4 +250,21 @@ fn rerun_if(path: &Path) {
     } else {
         println!("cargo:rerun-if-changed={}", path.display());
     }
+}
+
+fn cp_r(from: impl AsRef<Path>, to: impl AsRef<Path>) -> Result<(), Error> {
+    for e in from.as_ref().read_dir().unwrap() {
+        let e = e.unwrap();
+        let from = e.path();
+        let to = to.as_ref().join(e.file_name());
+        if e.file_type().unwrap().is_dir() {
+            std::fs::create_dir_all(&to)?;
+            cp_r(&from, &to)?;
+        } else {
+            println!("{} => {}", from.display(), to.display());
+            std::fs::copy(&from, &to)?;
+        }
+    }
+
+    Ok(())
 }
