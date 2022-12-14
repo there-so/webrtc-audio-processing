@@ -83,7 +83,9 @@ mod webrtc {
         // options.overwrite = true;
 
         // fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
-        cp_r(BUNDLED_SOURCE_PATH, &out_dir.join(BUNDLED_SOURCE_PATH)).expect("cp_r");
+        let source_in_out = &out_dir.join(BUNDLED_SOURCE_PATH);
+        std::fs::create_dir_all(&source_in_out).unwrap();
+        cp_r(BUNDLED_SOURCE_PATH, &source_in_out).expect("cp_r");
 
         Ok(out_dir.join(BUNDLED_SOURCE_PATH))
     }
