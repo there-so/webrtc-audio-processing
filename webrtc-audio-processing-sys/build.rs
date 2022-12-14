@@ -83,7 +83,7 @@ mod webrtc {
         // options.overwrite = true;
 
         // fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
-        cp_r(BUNDLED_SOURCE_PATH, &out_dir).expect("cp_r");
+        cp_r(BUNDLED_SOURCE_PATH, &out_dir.join(BUNDLED_SOURCE_PATH)).expect("cp_r");
 
         Ok(out_dir.join(BUNDLED_SOURCE_PATH))
     }
@@ -261,10 +261,9 @@ fn cp_r(from: impl AsRef<Path>, to: impl AsRef<Path>) -> Result<(), Error> {
             std::fs::create_dir_all(&to)?;
             cp_r(&from, &to)?;
         } else {
-            if from.clone().to_str().unwrap().contains(".git") {
+            if from.clone().to_str().unwrap().contains(".git/") {
                 continue;
             }
-            println!("{} => {}", from.display(), to.display());
             println!("{} => {}", from.display(), to.display());
             std::fs::copy(&from, &to)?;
         }
