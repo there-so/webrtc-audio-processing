@@ -199,6 +199,7 @@ fn main() -> Result<(), Error> {
         .flag("-Wno-unused-parameter")
         .flag("-Wno-deprecated-declarations")
         .flag("-std=c++11")
+        .cpp_link_stdlib("stdc++") // use libstdc++
         .out_dir(&out_dir())
         .compile("webrtc_audio_processing_wrapper");
 
