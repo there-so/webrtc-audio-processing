@@ -192,6 +192,15 @@ fn main() -> Result<(), Error> {
         cc_build.flag(&format!("-mmacos-version-min={}", min_version));
     }
 
+    // use libstdc++ for older macs
+    match std::env::var("CARGO_CFG_TARGET_ARCH").unwrap().as_str() {
+        "x86_64" => {
+            cc_build.cpp_link_stdlib("stdc++");
+        },
+        // on apple silicon it fails
+        _ => {},
+    };
+
     cc_build
         .cpp(true)
         .file("src/wrapper.cpp")
@@ -199,7 +208,6 @@ fn main() -> Result<(), Error> {
         .flag("-Wno-unused-parameter")
         .flag("-Wno-deprecated-declarations")
         .flag("-std=c++11")
-        .cpp_link_stdlib("stdc++") // use libstdc++
         .out_dir(&out_dir())
         .compile("webrtc_audio_processing_wrapper");
 
