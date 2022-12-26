@@ -255,6 +255,9 @@ fn rerun_if(path: &Path) {
 }
 
 fn cp_r(from: impl AsRef<Path>, to: impl AsRef<Path>) -> Result<(), Error> {
+    let profile = std::env::var("PROFILE").unwrap();
+    let profile = profile.as_str();
+
     for e in from.as_ref().read_dir().unwrap() {
         let e = e.unwrap();
         let from = e.path();
@@ -263,7 +266,7 @@ fn cp_r(from: impl AsRef<Path>, to: impl AsRef<Path>) -> Result<(), Error> {
             std::fs::create_dir_all(&to)?;
             cp_r(&from, &to)?;
         } else {
-            if from.clone().to_str().unwrap().contains(".git/") {
+            if profile == "debug" && from.clone().to_str().unwrap().contains(".git/") {
                 continue;
             }
             println!("{} => {}", from.display(), to.display());
