@@ -72,7 +72,7 @@ mod webrtc {
         let target = std::env::var("TARGET").unwrap();
         let mut target_tuple = target.split("-").collect::<Vec<_>>();
 
-        if target_tuple.len() <= 3 {
+        if target_tuple.len() < 3 {
             // Remove the vendor compo  nent.
             target_tuple.remove(1);
         }
