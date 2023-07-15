@@ -71,8 +71,11 @@ mod webrtc {
     fn get_target() -> String {
         let target = std::env::var("TARGET").unwrap();
         let mut target_tuple = target.split("-").collect::<Vec<_>>();
-        // Remove the vendor compo  nent.
-        target_tuple.remove(1);
+
+        if target_tuple.len() <= 3 {
+            // Remove the vendor compo  nent.
+            target_tuple.remove(1);
+        }
 
         assert_eq!(3, target_tuple.len());
         target_tuple.join("-")
