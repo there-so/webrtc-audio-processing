@@ -112,9 +112,13 @@ mod webrtc {
             run_command(&build_dir, "libtoolize", None).expect("failed libtoolize");
         }
 
+        dbg!(get_target());
+
         run_command(&build_dir, "aclocal", None).expect("failed aclocal");
         run_command(&build_dir, "automake", Some(&["--add-missing", "--copy"]))
             .expect("failed automake");
+        // run_command(&build_dir, "autoconf", Some(&["--host", &get_target()]))
+        //     .expect("failed autoconf");
         run_command(&build_dir, "autoconf", None).expect("failed autoconf");
 
         autotools::Config::new(build_dir)
