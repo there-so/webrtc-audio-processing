@@ -115,11 +115,14 @@ mod webrtc {
         dbg!(get_target());
 
         run_command(&build_dir, "aclocal", None).expect("failed aclocal");
+        info!("aclocal done");
         run_command(&build_dir, "automake", Some(&["--add-missing", "--copy"]))
             .expect("failed automake");
+        info!("automake done");
         // run_command(&build_dir, "autoconf", Some(&["--host", &get_target()]))
         //     .expect("failed autoconf");
         run_command(&build_dir, "autoconf", None).expect("failed autoconf");
+        info!("autoconf done");
 
         autotools::Config::new(build_dir)
             .cflag("-fPIC")
