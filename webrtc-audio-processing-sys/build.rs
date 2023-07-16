@@ -220,7 +220,7 @@ fn main() -> Result<(), Error> {
 
     // do not set on macos
     // if !cfg!(target_os = "macos") {
-    cc_build.flag("-std=c++11");
+    // cc_build.flag("-std=c++11");
     // }
     // use libstdc++ for older macs
     // match std::env::var("CARGO_CFG_TARGET_ARCH").unwrap().as_str() {
