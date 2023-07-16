@@ -106,12 +106,15 @@ mod webrtc {
     pub(super) fn build_if_necessary() -> Result<(), Error> {
         let build_dir = copy_source_to_out_dir().expect("failed copy_source_to_out_dir");
 
+        println!("before glibtoolize");
+
         if cfg!(target_os = "macos") {
             run_command(&build_dir, "glibtoolize", None).expect("failed glibtoolize");
         } else {
             run_command(&build_dir, "libtoolize", None).expect("failed libtoolize");
         }
 
+        println!("glibtoolize done");
         dbg!(get_target());
 
         run_command(&build_dir, "aclocal", None).expect("failed aclocal");
@@ -187,8 +190,10 @@ fn main() -> Result<(), Error> {
             .args(&["submodule", "update", "--init", "webrtc-audio-processing"])
             .status();
     }
+    println!("before build_if_necessary");
 
     webrtc::build_if_necessary().expect("failed to build if necessary");
+    println!("after build_if_necessary");
     let (webrtc_include, webrtc_lib) =
         webrtc::get_build_paths().expect("failed to get build paths");
 
