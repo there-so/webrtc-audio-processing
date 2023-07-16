@@ -126,7 +126,7 @@ mod webrtc {
             .cxxflag("-fPIC")
             .disable_shared()
             .enable_static()
-            .host(&get_target())
+            .target(&get_target())
             .build();
 
         Ok(())
