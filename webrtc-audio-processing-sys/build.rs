@@ -133,7 +133,7 @@ mod webrtc {
             .disable_shared()
             .enable_static()
             .config_option("host", Some("aarch64-apple-darwin"))
-            .config_option("cross-compile", None)
+            .config_option("enable-cross-compile", None)
             // .target(&get_target())
             // .host(&get_target())
             .build();
