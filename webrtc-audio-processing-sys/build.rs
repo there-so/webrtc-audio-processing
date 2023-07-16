@@ -132,7 +132,7 @@ mod webrtc {
             .cxxflag("-fPIC")
             .disable_shared()
             .enable_static()
-            .config_option("host", Some("aarch64-apple-darwin"))
+            .config_option("host", Some(&get_target()))
             .config_option("enable-cross-compile", None)
             // .target(&get_target())
             // .host(&get_target())
