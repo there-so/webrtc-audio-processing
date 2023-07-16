@@ -133,7 +133,7 @@ mod webrtc {
             .disable_shared()
             .enable_static()
             // .target(&get_target())
-            .host(&get_target())
+            // .host(&get_target())
             .build();
 
         println!("autotools done");
