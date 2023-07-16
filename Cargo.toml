@@ -20,7 +20,7 @@ bundled = ["webrtc-audio-processing-sys/bundled"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"], optional = true }
-webrtc-audio-processing-sys = { path = "webrtc-audio-processing-sys", version = "0.4.0" }
+webrtc-audio-processing-sys = { path = "webrtc-audio-processing-sys" }
 
 [[example]]
 name = "recording"
@@ -34,9 +34,9 @@ hound = "3.4"
 json5 = "0.3"
 portaudio = "0.7"
 regex = "1"
-serde = { version = "1", features = ["derive"]}
+serde = { version = "1", features = ["derive"] }
 structopt = "0.3"
 log = "0.4"
 
 [package.metadata.docs.rs]
-features = [ "bundled" ]
+features = ["bundled"]
