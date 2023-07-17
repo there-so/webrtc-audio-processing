@@ -98,7 +98,9 @@ mod webrtc {
         // fs_extra::dir::copy(BUNDLED_SOURCE_PATH, &out_dir, &options).expect("fs_extra::dir::copy");
         let source_in_out = &out_dir.join(BUNDLED_SOURCE_PATH);
         std::fs::create_dir_all(&source_in_out).unwrap();
-        cp_r(BUNDLED_SOURCE_PATH, &source_in_out).expect("cp_r");
+        if let Err(error) = cp_r(BUNDLED_SOURCE_PATH, &source_in_out) {
+            println!("got error while cp_r {:#?}", error);
+        }
 
         Ok(out_dir.join(BUNDLED_SOURCE_PATH))
     }
@@ -305,13 +307,16 @@ fn cp_r(from: impl AsRef<Path>, to: impl AsRef<Path>) -> Result<(), Error> {
         let e = e.unwrap();
         let from = e.path();
         let to = to.as_ref().join(e.file_name());
+        if from.clone().to_str().unwrap().contains(".git/") {
+            continue;
+        }
         if e.file_type().unwrap().is_dir() {
             std::fs::create_dir_all(&to)?;
             cp_r(&from, &to)?;
         } else {
-            if profile == "debug" && from.clone().to_str().unwrap().contains(".git/") {
-                continue;
-            }
+            // if profile == "debug" && from.clone().to_str().unwrap().contains(".git/") {
+            //     continue;
+            // }
             println!("{} => {}", from.display(), to.display());
             std::fs::copy(&from, &to)?;
         }
